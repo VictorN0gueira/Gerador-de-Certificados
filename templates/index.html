@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Flatpickr CSS (para melhorar o calendário) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <title>Gerador de Certificados</title>
+
+    <!-- jQuery (para facilitar manipulações do DOM e eventos) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        /* Fade-in ao carregar a página */
+        body {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        body.loaded {
+            opacity: 1;
+        }
+
+        /* Aqui ficam seus estilos CSS principais */
+        body.light {
+            background-color: #f7f9fc;
+            color: #000;
+        }
+
+        body.dark {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            transition: all 0.5s ease;
+        }
+
+        .dark .container {
+            background-color: #495057;
+        }
+
+        /* Reduzindo o tamanho da fonte para os rótulos específicos */
+        label[for="responsavel"],
+        label[for="estado"],
+        label[for="cidade"],
+        label[for="data_emissao"] {
+            font-size: 14px;
+        }
+
+        /* Estilo para o botão de alternância de tema */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: #000; /* Cor padrão do ícone no modo claro */
+            transition: transform 0.2s ease, color 0.3s ease;
+        }
+
+        /* Efeito de hover no botão de alternância de tema */
+        .theme-toggle:hover {
+            transform: scale(1.1); /* Suave animação de hover */
+        }
+
+        .light .theme-toggle {
+            color: #000;
+        }
+
+        .dark .theme-toggle {
+            color: #fff;
+        }
+
+        /* Efeito de foco nos inputs e textarea */
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            outline: none;
+        }
+
+        /* Efeito de hover no botão */
+        button:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="light">
+    <!-- Botão de alternância de tema -->
+    <button id="theme-toggle" class="theme-toggle">☾</button>
+
+    <!-- Conteúdo do formulário -->
+    <div class="container">
+        <h1>Gerador de Certificados</h1>
+        <form action="/generate" method="POST" class="certificate-form">
+            <label for="name">Nome do destinatário:</label>
+            <input type="text" id="name" name="name" placeholder="Digite o nome do destinatário" required>
+
+            <label for="description">Descrição do certificado:</label>
+            <textarea id="description" name="description" placeholder="Digite o texto do certificado" required></textarea>
+
+            <label for="responsavel">Nome do responsável:</label>
+            <input type="text" id="responsavel" name="responsavel" placeholder="Digite o nome do responsável" required>
+
+            <!-- Seleção do Estado -->
+            <label for="estado">Estado:</label>
+            <select id="estado" name="estado" required>
+                <option value="">Selecione o estado</option>
+            </select>
+
+            <!-- Seleção da Cidade -->
+            <label for="cidade">Cidade:</label>
+            <select id="cidade" name="cidade" required>
+                <option value="">Selecione a cidade</option>
+            </select>
+
+            <!-- Seleção da Data -->
+            <label for="data_emissao">Data de Emissão:</label>
+            <input type="text" id="data_emissao" name="data_emissao" placeholder="dd/mm/aaaa" required>
+
+            <button type="submit">Gerar Certificado</button>
+        </form>
+    </div>
+
+    <!-- Flatpickr Script (para melhorar a seleção de datas) -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+        // Inicializa o Flatpickr no campo de data
+        flatpickr("#data_emissao", {
+            dateFormat: "Y-m-d",  // Formato de data para o backend (ano/mês/dia)
+            altInput: true,       // Campo alternativo que mostra a data formatada
+            altFormat: "d/m/Y",   // Formato da data exibida no campo alternativo (dia/mês/ano)
+            locale: "pt",         // Define o idioma como Português
+        });
+
+        // Alternância de tema claro/escuro
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        themeToggleBtn.addEventListener('click', () => {
+            if (body.classList.contains('light')) {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                themeToggleBtn.textContent = '☼';  // Ícone de sol para o modo escuro
+            } else {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                themeToggleBtn.textContent = '☾';  // Ícone de lua para o modo claro
+            }
+        });
+
+        // Fade-in ao carregar a página
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
+        });
+
+        // Carregar o arquivo JSON de estados e cidades
+        const url = '{{ url_for("static", filename="data/brasil-estados-cidades.json") }}';
+
+        $.getJSON(url, function(data) {
+            const $estado = $('#estado');
+            const $cidade = $('#cidade');
+
+            // Preencher o campo de estados com a sigla e nome
+            data.estados.forEach(function(estado) {
+                $estado.append('<option value="' + estado.sigla + '">' + estado.nome + '</option>');
+            });
+
+            // Quando o estado for selecionado, atualizar as cidades
+            $estado.on('change', function() {
+                const estadoSelecionado = $(this).val();
+                const estadoInfo = data.estados.find(e => e.sigla === estadoSelecionado);
+                const cidades = estadoInfo ? estadoInfo.cidades : [];
+
+                // Limpar as cidades anteriores
+                $cidade.empty();
+                $cidade.append('<option value="">Selecione a cidade</option>');
+
+                // Adicionar as novas cidades
+                cidades.forEach(function(cidade) {
+                    $cidade.append('<option value="' + cidade + '">' + cidade + '</option>');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+/* Fade-in ao carregar a página */
+body {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+body.loaded {
+    opacity: 1;
+}
+
+/* Estilos principais para o corpo */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f9fc;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    transition: background-color 0.3s ease;
+}
+
+/* Estilos para o contêiner */
+.container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    transition: all 0.5s ease;
+}
+
+/* Estilo do título */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-family: 'Georgia', serif; /* Fonte mais elegante */
+}
+
+/* Estilo dos labels */
+label {
+    font-weight: bold;
+    margin-top: 10px;
+    display: block;
+}
+
+/* Reduzindo o tamanho da fonte para os rótulos específicos */
+label[for="responsavel"],
+label[for="estado"],
+label[for="cidade"],
+label[for="data_emissao"] {
+    font-size: 14px;
+}
+
+/* Estilos para os inputs, textarea e select */
+input[type="text"],
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px; /* Bordas arredondadas */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Estilos para os selects (Estado e Cidade) */
+select {
+    background-color: #f7f9fc;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Estilos para o modo escuro nos selects */
+.dark select {
+    background-color: #495057;
+    color: #fff;
+    border: 1px solid #6c757d;
+}
+
+select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Efeito de foco nos campos */
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
+
+/* Estilos para o botão */
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Efeito de hover no botão */
+button:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+/* Remover outline ao focar no botão */
+button:focus {
+    outline: none;
+}
+
+/* Estilo para o botão de alternância de tema */
+.theme-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: #000; /* Cor padrão do ícone no modo claro */
+    transition: transform 0.2s ease, color 0.3s ease;
+}
+
+/* Efeito de hover no botão de alternância de tema */
+.theme-toggle:hover {
+    transform: scale(1.1); /* Suave animação de hover */
+}
+
+/* Estilos do modo claro */
+body.light {
+    background-color: #f7f9fc;
+    color: #000;
+}
+
+.light .theme-toggle {
+    color: #000;
+}
+
+/* Estilos do modo escuro */
+body.dark {
+    background-color: #343a40;
+    color: #fff;
+}
+
+.dark .theme-toggle {
+    color: #fff;
+}
+
+.dark .container {
+    background-color: #495057;
+    color: white;
+}
+
+.dark h1 {
+    color: white; /* Muda a cor do título para branco no modo escuro */
+}
+
+.dark input[type="text"],
+.dark textarea {
+    background-color: #343a40;
+    color: white;
+    border: 1px solid #6c757d;
+}
+
+.dark input[type="text"]:focus,
+.dark textarea:focus,
+.dark select:focus {
+    border-color: #007BFF;
+}
